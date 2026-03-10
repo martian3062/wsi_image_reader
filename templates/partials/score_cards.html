@@ -1,0 +1,17 @@
+<div class="card">
+  <h3>Score Cards</h3>
+  <div class="score-box">
+    <div class="score-label">Risk Score</div>
+    <div class="score-value">{{ row["risk_score"] }}</div>
+    <div class="score-pattern">{{ row["pattern_label"] }}</div>
+  </div>
+
+  <table>
+    <tbody>
+      <tr><th>Edge Density</th><td>{{ row["edge_density"] }}</td></tr>
+      <tr><th>Redness</th><td>{{ row["redness_score"] }}</td></tr>
+      <tr><th>Tissue Ratio</th><td>{{ row["tissue_ratio"] }}</td></tr>
+      <tr><th>Saturation</th><td>{{ row["saturation_score"] }}</td></tr>
+    </tbody>
+  </table>
+</div>

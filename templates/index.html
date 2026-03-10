@@ -1,0 +1,50 @@
+{% extends "base.html" %}
+
+{% block content %}
+<section class="card">
+  <h2>Upload Image</h2>
+  <p class="muted">
+    Upload a pathology-style image or any microscopy-style image to compute a simple visual risk score.
+    This is a heuristic demo, not a medical diagnosis.
+  </p>
+
+  {% if error %}
+    <div class="alert">{{ error }}</div>
+  {% endif %}
+
+  <form action="{{ url_for('upload') }}" method="post" enctype="multipart/form-data" class="upload-form">
+    <input type="file" name="image" accept=".png,.jpg,.jpeg,.webp,.svs" required />
+    <button type="submit">Analyze</button>
+  </form>
+</section>
+
+<section class="card">
+  <h2>Recent Analyses</h2>
+  {% if recent %}
+    <table>
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Filename</th>
+          <th>Risk Score</th>
+          <th>Pattern</th>
+          <th>Created</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for item in recent %}
+          <tr>
+            <td><a href="{{ url_for('result', analysis_id=item['id']) }}">{{ item['id'] }}</a></td>
+            <td>{{ item['filename'] }}</td>
+            <td>{{ item['risk_score'] }}</td>
+            <td>{{ item['pattern_label'] }}</td>
+            <td>{{ item['created_at'] }}</td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  {% else %}
+    <p class="muted">No analyses yet.</p>
+  {% endif %}
+</section>
+{% endblock %}

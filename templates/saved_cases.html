@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+
+{% block content %}
+<section class="card">
+  <h2>Saved Cases</h2>
+  {% if rows %}
+    <table>
+      <thead>
+        <tr>
+          <th>Saved ID</th>
+          <th>Title</th>
+          <th>Filename</th>
+          <th>Risk</th>
+          <th>Pattern</th>
+          <th>Open</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for row in rows %}
+        <tr>
+          <td>{{ row["saved_id"] }}</td>
+          <td>{{ row["title"] }}</td>
+          <td>{{ row["filename"] }}</td>
+          <td>{{ row["risk_score"] }}</td>
+          <td>{{ row["pattern_label"] }}</td>
+          <td><a href="{{ url_for('case_detail', analysis_id=row['analysis_id']) }}">View</a></td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  {% else %}
+    <p>No saved cases yet.</p>
+  {% endif %}
+</section>
+{% endblock %}

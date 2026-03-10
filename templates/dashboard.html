@@ -1,0 +1,109 @@
+{% extends "base.html" %}
+
+{% block content %}
+<section class="card glass-card">
+  <h2>Dashboard</h2>
+  <p class="muted">Risk score overview for recent analyses.</p>
+  <div class="chart-container">
+    <canvas id="riskChart"></canvas>
+  </div>
+</section>
+
+<section class="card glass-card">
+  <h3>Pattern Distribution</h3>
+  <div class="chart-container">
+    <canvas id="patternChart"></canvas>
+  </div>
+</section>
+
+<section class="card glass-card">
+  <h3>Recent Analyses</h3>
+  <table>
+    <thead>
+      <tr>
+        <th>ID</th>
+        <th>Filename</th>
+        <th>Risk</th>
+        <th>Pattern</th>
+        <th>Created</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for row in rows %}
+      <tr>
+        <td><a href="{{ url_for('case_detail', analysis_id=row['id']) }}">{{ row["id"] }}</a></td>
+        <td>{{ row["filename"] }}</td>
+        <td>{{ row["risk_score"] }}</td>
+        <td>{{ row["pattern_label"] }}</td>
+        <td>{{ row["created_at"] }}</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</section>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+  const labels = [{% for row in rows %}"{{ row['id'] }}",{% endfor %}];
+  const values = [{% for row in rows %}{{ row['risk_score'] or 0 }},{% endfor %}];
+
+  new Chart(document.getElementById("riskChart"), {
+    type: "line",
+    data: {
+      labels: labels,
+      datasets: [{
+        label: "Risk Score",
+        data: values,
+        tension: 0.35,
+        fill: true
+      }]
+    },
+    options: {
+      responsive: true,
+      plugins: {
+        legend: {
+          labels: {
+            color: "#4b134f"
+          }
+        }
+      },
+      scales: {
+        x: {
+          ticks: { color: "#7c3aed" },
+          grid: { color: "rgba(124,58,237,0.12)" }
+        },
+        y: {
+          ticks: { color: "#7c3aed" },
+          grid: { color: "rgba(124,58,237,0.12)" }
+        }
+      }
+    }
+  });
+
+  const patternCounts = {};
+  {% for row in rows %}
+    patternCounts["{{ row['pattern_label'] }}"] = (patternCounts["{{ row['pattern_label'] }}"] || 0) + 1;
+  {% endfor %}
+
+  new Chart(document.getElementById("patternChart"), {
+    type: "doughnut",
+    data: {
+      labels: Object.keys(patternCounts),
+      datasets: [{
+        data: Object.values(patternCounts),
+        borderWidth: 2
+      }]
+    },
+    options: {
+      responsive: true,
+      plugins: {
+        legend: {
+          labels: {
+            color: "#4b134f"
+          }
+        }
+      }
+    }
+  });
+</script>
+{% endblock %}

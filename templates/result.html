@@ -1,0 +1,113 @@
+{% extends "base.html" %}
+
+{% block content %}
+<section class="card glass-card">
+  <h2>Analysis Result</h2>
+  <p><strong>File:</strong> {{ row["filename"] }}</p>
+  <p><strong>Image size:</strong> {{ row["width"] }} × {{ row["height"] }}</p>
+
+  <div class="score-box gradient-score">
+    <div class="score-label">Risk Score</div>
+    <div class="score-value">{{ row["risk_score"] }}</div>
+    <div class="score-pattern">{{ row["pattern_label"] }}</div>
+  </div>
+
+  <div class="progress-wrap">
+    <div class="progress-title">Risk Level</div>
+    <div class="progress-bar">
+      <div class="progress-fill" style="width: {{ row['risk_score'] }}%;"></div>
+    </div>
+  </div>
+
+  <p class="summary">{{ row["summary"] }}</p>
+</section>
+
+<section class="card glass-card">
+  <h2>Feature Breakdown</h2>
+  <div class="chart-container">
+    <canvas id="featureChart"></canvas>
+  </div>
+</section>
+
+<section class="card glass-card">
+  <h2>Feature Table</h2>
+  <table>
+    <tbody>
+      <tr><th>Average Intensity</th><td>{{ row["avg_intensity"] }}</td></tr>
+      <tr><th>Intensity Std</th><td>{{ row["intensity_std"] }}</td></tr>
+      <tr><th>Edge Density</th><td>{{ row["edge_density"] }}</td></tr>
+      <tr><th>Redness Score</th><td>{{ row["redness_score"] }}</td></tr>
+      <tr><th>Saturation Score</th><td>{{ row["saturation_score"] }}</td></tr>
+      <tr><th>Tissue Ratio</th><td>{{ row["tissue_ratio"] }}</td></tr>
+      <tr><th>Created</th><td>{{ row["created_at"] }}</td></tr>
+    </tbody>
+  </table>
+</section>
+
+<section class="card glass-card">
+  <div class="button-row">
+    <a class="button-link" href="{{ url_for('index') }}">Back to Home</a>
+    <a class="button-link secondary-btn" href="{{ url_for('case_detail', analysis_id=row['id']) }}">Open Case Detail</a>
+  </div>
+</section>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+  const featureLabels = [
+    "Intensity Std",
+    "Edge Density",
+    "Redness",
+    "Saturation",
+    "Tissue Ratio"
+  ];
+
+  const featureValues = [
+    {{ row["intensity_std"] or 0 }},
+    {{ row["edge_density"] or 0 }},
+    {{ row["redness_score"] or 0 }},
+    {{ row["saturation_score"] or 0 }},
+    {{ row["tissue_ratio"] or 0 }}
+  ];
+
+  new Chart(document.getElementById("featureChart"), {
+    type: "bar",
+    data: {
+      labels: featureLabels,
+      datasets: [{
+        label: "Feature Values",
+        data: featureValues,
+        borderWidth: 2,
+        borderRadius: 10
+      }]
+    },
+    options: {
+      responsive: true,
+      plugins: {
+        legend: {
+          labels: {
+            color: "#4b134f"
+          }
+        }
+      },
+      scales: {
+        x: {
+          ticks: {
+            color: "#7c3aed"
+          },
+          grid: {
+            color: "rgba(124, 58, 237, 0.12)"
+          }
+        },
+        y: {
+          ticks: {
+            color: "#7c3aed"
+          },
+          grid: {
+            color: "rgba(124, 58, 237, 0.12)"
+          }
+        }
+      }
+    }
+  });
+</script>
+{% endblock %}

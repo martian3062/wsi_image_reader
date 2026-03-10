@@ -1,0 +1,21 @@
+<div class="card">
+  <h3>ROI Selection</h3>
+  <form method="get" action="{{ url_for('tile_bp.roi_image', analysis_id=row['id']) }}" target="_blank">
+    <label>X</label>
+    <input type="number" name="x" value="0">
+
+    <label>Y</label>
+    <input type="number" name="y" value="0">
+
+    <label>W</label>
+    <input type="number" name="w" value="512">
+
+    <label>H</label>
+    <input type="number" name="h" value="512">
+
+    <label>Level</label>
+    <input type="number" name="level" value="0">
+
+    <button type="submit">Open ROI</button>
+  </form>
+</div>
